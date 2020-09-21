@@ -121,6 +121,10 @@ sgf %>%
 
 ```{r}
 
+sgf_faces <- sgf %>% 
+  filter (condition == 'Label',
+          item == 'faces')
+
 ```
 
 Next up, *adding columns*. You might do this perhaps to compute some kind of derived variable. `mutate` is the verb for these situations - it allows you to add a column. Let's add a discrete age group factor to our dataset.
@@ -194,6 +198,18 @@ ggplot(sgf_means,
 
 ```{r}
 
+sgf_means_byitems <- sgf %>%
+  group_by(item, condition) %>%
+  summarise(correct = mean(correct), 
+            n_observations = length(subid))
+sgf_means_byitems
+
+ggplot(sgf_means_byitems, 
+       aes(x = item, y = correct, col = condition, group = condition)) + 
+  geom_line() + 
+  ylim(0,1) +
+  theme_classic()
+
 ```
 
 
@@ -232,7 +248,17 @@ sgf_tidy
 ```
 We can compare this to `sgf` and see that we've recovered the original long form. (This is good, because I used `pivot_wider` to *make* the `sgf_wide` dataframe). 
 
-**Exercise.** Use `pivot_wider` to try and make `sgf_wide` from `sgf`. The two arguments you need are `names_from` and `values_from`, which specify the names and values (just like in `pivot_longer`).   
+**Exercise.** Use `pivot_wider` to try and make `sgf_wide` from `sgf`. The two arguments you need are `names_from` and `values_from`, which specify the names and values (just like in `pivot_longer`).  
+
+```{r}
+
+sgf_wide_exercise <- sgf %>%
+  pivot_wider(names_from = "item",
+              values_from = "correct")
+sgf_wide_exercise
+
+```
+
 
 <!-- ----------------------------------------------------------------------- -->
 # Extras
